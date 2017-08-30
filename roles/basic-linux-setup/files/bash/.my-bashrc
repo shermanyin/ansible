@@ -1,0 +1,49 @@
+### Git ###
+
+# Shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gp='git pull'
+alias gf='git fetch'
+alias gb='git branch -vv'
+alias gr='git remote -v'
+
+# Helper scripts
+if [ -f ~/.git-prompt.sh ]; then
+	source ~/.git-prompt.sh
+fi
+
+if [ -f ~/.git-completion.bash ]; then
+	. ~/.git-completion.bash
+fi
+
+if [ -f ~/.git-up.sh ]; then
+    source ~/.git-up.sh
+fi
+
+# Prompt
+CUSTOM_DATE="$(date +%Y.%m.%d\ \(%a\)\ %T)"
+
+# Print network namespace if not in the default one
+if [ `ip netns id $$` ]; then
+    NETNS=" (ns: `ip netns id $$`)"
+fi
+
+# Color begin:  \[\033[
+# Color end:    \]
+PS1='\[\033[0;35m\]\n\u@\h \w$NETNS$(__git_ps1)\n$CUSTOM_DATE>\[\033[0m\] '
+
+# Shell functions
+if ls --color > /dev/null 2>&1; then
+    # GNU ls
+    alias ls='ls -Ap --color'
+else
+    # FreeBSD ls
+    alias ls='ls -GAp'
+fi
+
+alias rgrep='grep -r --color --exclude=*.pyc'
+alias grep='grep --color'
+

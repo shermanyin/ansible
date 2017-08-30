@@ -1,0 +1,13 @@
+---
+basic_pkgs:
+  - git
+  - python
+  - tree
+  - vim
+
+network_pkgs:
+  - arp-scan
+  - bridge-utils
+  - iputils-ping
+  - traceroute
+

@@ -1,0 +1,77 @@
+---
+- name: Add EHEL repo (yum)
+  become: true
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-$releasever
+    gpgcheck: yes
+  when: ansible_distribution == 'CentOS'
+
+- name: Install basic packages (apt)
+  become: true
+  apt:
+    pkg: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  with_items:
+    - "{{ basic_pkgs }}"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install basic packages (yum)
+  become: true
+  yum:
+    pkg: "{{ item }}"
+    update_cache: yes
+    state: latest
+  with_items: "{{ basic_pkgs }}"
+  when: ansible_distribution == 'CentOS'
+
+- name: Copy custom bash file
+  copy: src=bash/ dest=~/
+
+- name: Enable custom bash file
+  lineinfile:
+    dest=~/.bashrc
+    line='if [ -f ~/.my-bashrc ]; then . ~/.my-bashrc; fi'
+
+- name: Configure vim
+  copy: src=vim/ dest=~/
+
+- name: Configure git
+  git_config: name={{ item.key }} value={{ item.value }} scope=global
+  with_items:
+    - { key: 'color.ui', value: 'true' }
+    - { key: 'core.editor', value: 'vim' }
+    - { key: 'user.email',  value: 'shermanyin@gmail.com' }
+    - { key: 'user.name',   value: 'Sherman Yin' }
+
+- name: Setting up git helpers
+  copy: src=git/ dest=~/
+
+- name: Install networking packages (apt)
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  with_items:
+    - "{{ network_pkgs }}"
+    - iproute2
+    - ipcalc
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install networking packages (yum)
+  become: yes
+  yum:
+    pkg: "{{ item }}"
+    update_cache: yes
+    state: latest
+  with_items:
+    - "{{ network_pkgs }}"
+    - iproute
+  when: ansible_distribution == 'CentOS'
+

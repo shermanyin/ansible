@@ -1,0 +1,23 @@
+---
+- hosts: all
+
+  # Turn off gather_facts to install Python package required by the managed
+  # host first.
+  gather_facts: no
+
+  pre_tasks:
+    - name: Install python-simplejson (apt)
+      become: yes
+      raw: apt update && apt install -y python-simplejson
+      when: package_manager == "apt"
+
+    - name: Install python-simplejson (yum)
+      become: yes
+      raw: yum -y install python-simplejson
+      when: package_manager == "yum"
+
+    - name: Gather facts
+      setup:
+
+  roles:
+    - basic-linux-setup
