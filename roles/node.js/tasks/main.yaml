@@ -1,0 +1,41 @@
+---
+
+#- name: Install python-software-properties
+#  become: true
+#  apt:
+#    pkg: python-software-properties
+#    update_cache: yes
+#    cache_valid_time: 3600
+#    state: latest
+#  when: ansible_distribution == 'Ubuntu'
+
+- name: Download node.js setup file
+  become: true
+  get_url:
+    url: https://deb.nodesource.com/setup_8.x
+    dest: ~/setup_8.x
+    mode: 0744
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Adds node.js PPA
+  become: true
+  shell: ~/setup_8.x >> ~/setup_8.x.log
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install node.js
+  become: true
+  apt:
+    pkg: nodejs
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install build-essential
+  become: true
+  apt:
+    pkg: build-essential
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  when: ansible_distribution == 'Ubuntu'

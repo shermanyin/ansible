@@ -1,0 +1,6 @@
+---
+- name: Setup host for node.js development
+  hosts: all
+
+  roles:
+    - node.js
